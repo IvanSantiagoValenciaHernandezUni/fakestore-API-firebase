@@ -1,1 +1,0 @@
-# fakestore-API-firebase
