@@ -1,17 +1,20 @@
 // firebase/firebaseConfig.js
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import { getFirestore } from 'firebase/firestore';
 
 const firebaseConfig = {
-apiKey: "aqui su dato",
-authDomain: "aqui su dato",
-projectId: "aqui su dato",
-storageBucket: "aqui su dato",
-messagingSenderId: "aqui su dato",
-appId: "aqiu su dato"
+    apiKey: "AIzaSyDnKJwpxJxl6jjTD2esMRfTd_xenC24OXY",
+    authDomain: "fakestore-api-55a6a.firebaseapp.com",
+    projectId: "fakestore-api-55a6a",
+    storageBucket: "fakestore-api-55a6a.firebasestorage.app",
+    messagingSenderId: "671067418756",
+    appId: "1:671067418756:web:98a3580e0ca38e1a1292d1"
+    //measurementId: "G-0VBVL843XD"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
-export { auth };
+export { auth, db };
