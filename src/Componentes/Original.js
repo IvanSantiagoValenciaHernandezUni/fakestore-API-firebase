@@ -1,41 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, Image, StyleSheet, ActivityIndicator } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export default function HistorialCompras() {
+export default function Original() {
   const [productos, setProductos] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCompras = async () => {
+    const obtenerHistorial = async () => {
       try {
-        const res = await fetch('https://api.escuelajs.co/api/v1/products?offset=0&limit=10');
-        const data = await res.json();
-        setProductos(data);
+        const historial = await AsyncStorage.getItem('historial');
+        setProductos(historial ? JSON.parse(historial) : []);
       } catch (error) {
         console.error('Error al cargar historial:', error);
       } finally {
         setLoading(false);
       }
     };
-    fetchCompras();
+    obtenerHistorial();
   }, []);
 
   const renderItem = ({ item }) => (
     <View style={styles.card}>
-      <Image source={{ uri: item.images[0] }} style={styles.image} />
+      <Image source={{ uri: item.images?.[0] }} style={styles.image} />
       <View style={styles.info}>
         <Text style={styles.title}>{item.title}</Text>
         <Text style={styles.price}>${item.price}</Text>
-        <Text style={styles.description}>{item.description.slice(0, 80)}...</Text>
+        <Text style={styles.description}>{item.description?.slice(0, 80)}...</Text>
       </View>
     </View>
   );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>🧾 Historial de Compras</Text>
+      <Text style={styles.header}>🕵️ Historial de Productos Vistos</Text>
       {loading ? (
         <ActivityIndicator size="large" />
+      ) : productos.length === 0 ? (
+        <Text>No has visto productos recientemente.</Text>
       ) : (
         <FlatList
           data={productos}
@@ -49,7 +51,12 @@ export default function HistorialCompras() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16 },
-  header: { fontSize: 24, fontWeight: 'bold', marginBottom: 10, textAlign: 'center' },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
+    textAlign: 'center',
+  },
   card: {
     flexDirection: 'row',
     backgroundColor: '#f9f9f9',

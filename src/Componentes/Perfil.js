@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, Button, Alert, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, Alert, StyleSheet, ActivityIndicator } from 'react-native';
 import { auth } from '../../Firebase/firebaseConfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../../Firebase/firebaseConfig';
@@ -10,13 +10,17 @@ export default function Perfil() {
   const [telefono, setTelefono] = useState('');
   const [cargando, setCargando] = useState(true);
 
-  const uid = auth.currentUser?.uid;
-
   useEffect(() => {
-    if (!uid) return;
+    const usuario = auth.currentUser;
+
+    if (!usuario) {
+      Alert.alert('Error', 'No hay usuario autenticado');
+      return;
+    }
+
     const traerDatos = async () => {
       try {
-        const docRef = doc(db, 'usuarios', uid);
+        const docRef = doc(db, 'usuarios', usuario.uid);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           const data = docSnap.data();
@@ -33,10 +37,14 @@ export default function Perfil() {
         setCargando(false);
       }
     };
+
     traerDatos();
-  }, [uid]);
+  }, []);
 
   const actualizarDatos = async () => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return;
+
     try {
       const docRef = doc(db, 'usuarios', uid);
       await updateDoc(docRef, {
@@ -51,7 +59,9 @@ export default function Perfil() {
     }
   };
 
-  if (cargando) return <Text style={styles.cargando}>Cargando...</Text>;
+  if (cargando) {
+    return <ActivityIndicator style={{ marginTop: 50 }} size="large" />;
+  }
 
   return (
     <View style={styles.contenedor}>
@@ -83,9 +93,5 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 15,
     borderRadius: 10,
-  },
-  cargando: {
-    marginTop: 50,
-    textAlign: 'center',
   },
 });

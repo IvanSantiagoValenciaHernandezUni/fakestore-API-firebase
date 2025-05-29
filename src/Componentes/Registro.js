@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, Text, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Button, Text, StyleSheet } from 'react-native';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '../../Firebase/firebaseConfig';
@@ -11,9 +11,11 @@ export default function Registro() {
   const [contrasena, setContrasena] = useState('');
   const [fecha, setFecha] = useState('');
   const [telefono, setTelefono] = useState('');
+  const [error, setError] = useState('');  // Estado para el mensaje de error
   const navigation = useNavigation();
 
   const handleRegistro = async () => {
+    setError(''); // Limpiar error previo
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, correo, contrasena);
       const user = userCredential.user;
@@ -28,10 +30,10 @@ export default function Registro() {
         perdidos: 0,
       });
 
-      Alert.alert('Éxito', 'Usuario registrado correctamente');
-      navigation.navigate('Login');
+      navigation.replace('Home'); // Ir directo al Home tras registro
     } catch (error) {
-      Alert.alert('Error al registrarse', error.message);
+      console.log('Error en registro:', error); // Para debugging
+      setError('Credenciales de Registro no válidos');
     }
   };
 
@@ -46,6 +48,9 @@ export default function Registro() {
       <TextInput placeholder="Teléfono" value={telefono} onChangeText={setTelefono} keyboardType="phone-pad" style={styles.input} />
 
       <Button title="Registrarse" onPress={handleRegistro} />
+
+      {error ? <Text style={styles.error}>{error}</Text> : null}
+
       <View style={{ marginTop: 10 }}>
         <Button title="¿Ya tienes cuenta? Inicia sesión" onPress={() => navigation.navigate('Login')} />
       </View>
@@ -62,5 +67,10 @@ const styles = StyleSheet.create({
     padding: 12,
     marginBottom: 12,
     borderRadius: 6,
+  },
+  error: {
+    color: 'red',
+    marginTop: 10,
+    textAlign: 'center',
   },
 });

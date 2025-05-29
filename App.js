@@ -3,7 +3,6 @@ import { View, ActivityIndicator } from 'react-native';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { onAuthStateChanged } from 'firebase/auth';
@@ -15,14 +14,26 @@ import Home from './src/Componentes/Home';
 import Perfil from './src/Componentes/Perfil';
 import Original from './src/Componentes/Original';
 import Logout from './src/Componentes/Logout';
+import ProductoDetalle from './src/Componentes/ProductoDetalle';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
+function MainTabs() {
+  return (
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
+      <Tab.Screen name="Lista" component={Home} />
+      <Tab.Screen name="Original" component={Original} />
+      <Tab.Screen name="Perfil" component={Perfil} />
+      <Tab.Screen name="Cerrar Sesion" component={Logout} />
+    </Tab.Navigator>
+  );
+}
+
 export default function App() {
   const [usuario, setUsuario] = useState(null);
   const [cargando, setCargando] = useState(true);
-  
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUsuario(user);
@@ -30,7 +41,7 @@ export default function App() {
     });
     return unsubscribe;
   }, []);
-  
+
   if (cargando) {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -38,24 +49,30 @@ export default function App() {
       </View>
     );
   }
-  
+
   return (
     <NavigationContainer>
-      <Tab.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator>
         {usuario ? (
           <>
-            <Tab.Screen name="Home" component={Home} />
-            <Tab.Screen name="Original" component={Original} />
-            <Tab.Screen name="Perfil" component={Perfil} />
-            <Tab.Screen name="Logout" component={Logout} />
+            <Stack.Screen
+              name="MainTabs"
+              component={MainTabs}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ProductoDetalle"
+              component={ProductoDetalle}
+              options={{ title: 'Detalle del Producto' }}
+            />
           </>
         ) : (
           <>
-            <Tab.Screen name="Login" component={Login} />
-            <Tab.Screen name="Registro" component={Registro} />
+            <Stack.Screen name="Login" component={Login} />
+            <Stack.Screen name="Registro" component={Registro} />
           </>
         )}
-      </Tab.Navigator>
+      </Stack.Navigator>
     </NavigationContainer>
   );
 }
