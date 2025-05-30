@@ -11,7 +11,7 @@ export default function Registro() {
   const [contrasena, setContrasena] = useState('');
   const [fecha, setFecha] = useState('');
   const [telefono, setTelefono] = useState('');
-  const [error, setError] = useState('');  // Estado para el mensaje de error
+  const [error, setError] = useState(''); 
   const navigation = useNavigation();
 
   const handleRegistro = async () => {
@@ -30,9 +30,9 @@ export default function Registro() {
         perdidos: 0,
       });
 
-      navigation.replace('Home'); // Ir directo al Home tras registro
+      navigation.replace('Home'); 
     } catch (error) {
-      console.log('Error en registro:', error); // Para debugging
+      console.log('Error en registro:', error); 
       setError('Credenciales de Registro no válidos');
     }
   };

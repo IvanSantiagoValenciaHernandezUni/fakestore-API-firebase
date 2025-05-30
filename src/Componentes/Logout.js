@@ -11,7 +11,7 @@ export default function Logout() {
     const cerrarSesion = async () => {
       try {
         await signOut(auth);
-        navigation.replace('Login'); // ✅ Redirige a Login después de cerrar sesión
+        navigation.replace('Login');
       } catch (error) {
         console.error('Error al cerrar sesión:', error);
       }

@@ -7,16 +7,16 @@ import { useNavigation } from '@react-navigation/native';
 export default function Login() {
   const [correo, setCorreo] = useState('');
   const [contrasena, setContrasena] = useState('');
-  const [error, setError] = useState('');  // Estado para mensaje de error
+  const [error, setError] = useState(''); 
   const navigation = useNavigation();
 
   const handleLogin = async () => {
-    setError(''); // Limpiar error previo
+    setError('');
     try {
       await signInWithEmailAndPassword(auth, correo, contrasena);
-      navigation.replace('Home'); // Ir al Home después del login
+      navigation.replace('Home');
     } catch (error) {
-      console.log('Error en login:', error); // Para debugging
+      console.log('Error en login:', error);
       setError('Credenciales de usuario y contraseña no válidos');
     }
   };
